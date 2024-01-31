@@ -42,6 +42,8 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(seconds: 2),
     );
     _animation = Tween<double>(begin: 0.0, end: pi * 2).animate(_controller);
+
+    _controller.repeat();
   }
 
   @override
@@ -49,21 +51,30 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       backgroundColor: Colors.grey,
       body: Center(
-        child: Container(
-          height: 150,
-          width: 150,
-          decoration: BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()..rotateZ(_animation.value),
+              child: Container(
+                height: 150,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
