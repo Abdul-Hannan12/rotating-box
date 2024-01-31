@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' show pi;
 
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -34,6 +36,8 @@ class _HomePageState extends State<HomePage>
   late AnimationController _controller;
   late Animation _animation;
 
+  String axis = 'Z';
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +51,25 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  Matrix4 getAxisTransform(String axis) {
+    switch (axis) {
+      case "X":
+        return Matrix4.identity()..rotateX(_animation.value);
+      case "Y":
+        return Matrix4.identity()..rotateY(_animation.value);
+      case "Z":
+        return Matrix4.identity()..rotateZ(_animation.value);
+      default:
+        return Matrix4.identity()..rotateZ(_animation.value);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey,
@@ -56,7 +79,7 @@ class _HomePageState extends State<HomePage>
           builder: (context, child) {
             return Transform(
               alignment: Alignment.center,
-              transform: Matrix4.identity()..rotateZ(_animation.value),
+              transform: getAxisTransform(axis),
               child: Container(
                 height: 150,
                 width: 150,
@@ -76,6 +99,47 @@ class _HomePageState extends State<HomePage>
             );
           },
         ),
+      ),
+      floatingActionButton: SpeedDial(
+        backgroundColor: Colors.blueGrey,
+        animatedIcon: AnimatedIcons.menu_close,
+        overlayColor: Colors.black12,
+        spaceBetweenChildren: 12,
+        children: [
+          SpeedDialChild(
+            backgroundColor: Colors.deepPurple,
+            label: 'Z Axis',
+            labelBackgroundColor: Colors.blueGrey,
+            child: const Icon(Icons.rotate_right_rounded),
+            onTap: () {
+              setState(() {
+                axis = 'Z';
+              });
+            },
+          ),
+          SpeedDialChild(
+            backgroundColor: Colors.deepPurple,
+            child: const Icon(Icons.keyboard_double_arrow_right_rounded),
+            label: 'Y Axis',
+            labelBackgroundColor: Colors.blueGrey,
+            onTap: () {
+              setState(() {
+                axis = 'Y';
+              });
+            },
+          ),
+          SpeedDialChild(
+            backgroundColor: Colors.deepPurple,
+            label: 'X Axis',
+            labelBackgroundColor: Colors.blueGrey,
+            child: const Icon(Icons.keyboard_double_arrow_down_rounded),
+            onTap: () {
+              setState(() {
+                axis = 'X';
+              });
+            },
+          ),
+        ],
       ),
     );
   }
